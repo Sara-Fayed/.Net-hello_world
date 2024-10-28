@@ -1,0 +1,54 @@
+name: .NET Core 2.0 CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up .NET Core
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: '2.1.x'  # Use the latest supported .NET Core 2.x SDK for .NET Core 2.0 projects
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build project
+      run: dotnet build --no-restore --configuration Release
+
+    - name: Run tests
+      run: dotnet test --no-build --verbosity normal
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up .NET Core
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: '2.1.x'
+
+    - name: Publish Application
+      run: dotnet publish -c Release -o output
+
+    - name: Deploy Application
+      env:
+        AZURE_WEBAPP_NAME: ${{ secrets.AZURE_WEBAPP_NAME }}
+        AZURE_WEBAPP_PACKAGE_PATH: output
+      run: |
+        # Add deployment commands for your environment
