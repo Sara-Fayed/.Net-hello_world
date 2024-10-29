@@ -31,7 +31,7 @@ jobs:
       run: dotnet publish hello-world-api/hello-world-api.csproj --configuration Release --output ./publish --no-build
 
     - name: Build Docker image
-      run: docker build -t your-dockerhub-username/hello-world-api:latest .
+      run: docker build -t sarafayed/dotnet-hello-world:latest .
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
@@ -40,4 +40,4 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Push Docker image to Docker Hub
-      run: docker push your-dockerhub-username/hello-world-api:latest
+      run: docker push sarafayed/dotnet-hello-world:latest
