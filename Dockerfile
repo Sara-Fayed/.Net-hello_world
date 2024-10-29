@@ -1,24 +1,22 @@
-# Stage 1: Build the application
+# Use the .NET Core SDK as the build environment
 FROM mcr.microsoft.com/dotnet/core/sdk:2.1 AS build-env
 WORKDIR /app
 
-# Copy csproj and restore as distinct layers
-COPY *.csproj ./
+# Copy the .csproj file and restore dependencies
+COPY hello-world-api/hello-world-api.csproj ./hello-world-api/
+WORKDIR /app/hello-world-api
 RUN dotnet restore
 
-# Copy the rest of the application files and publish
-COPY . ./
+# Copy the remaining application files
+COPY . /app
+
+# Publish the application
 RUN dotnet publish -c Release -o out
 
-# Stage 2: Create the runtime image
+# Build runtime image
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.1
 WORKDIR /app
+COPY --from=build-env /app/hello-world-api/out .
 
-# Copy only the necessary output files from the build stage
-COPY --from=build-env /app/out .
-
-# Expose the port your app will listen on
-EXPOSE 80
-
-# Command to run the application
-ENTRYPOINT ["dotnet", "dotnet-hello-world.dll"]
+# Set the entry point for the application
+ENTRYPOINT ["dotnet", "hello-world-api.dll"]
