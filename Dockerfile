@@ -14,9 +14,9 @@ COPY . /app
 RUN dotnet publish -c Release -o out
 
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.1
-WORKDIR /app
-COPY --from=build-env /app/hello-world-api/out .
+#FROM mcr.microsoft.com/dotnet/core/aspnet:2.1
+#WORKDIR /app
+#COPY --from=build-env /app/hello-world-api/out .
 
 # Set the entry point for the application
 ENTRYPOINT ["dotnet", "hello-world-api.dll"]
